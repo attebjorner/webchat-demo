@@ -1,0 +1,43 @@
+version: '3.1'
+
+services:
+  backend-psql:
+    image: 'backend:latest'
+    build:
+      context: .
+    depends_on:
+      - dbp
+    ports:
+      - '8080:8080'
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbp:5432/docker_dbp_1
+      - SPRING_DATASOURCE_USERNAME=theuser
+      - SPRING_DATASOURCE_PASSWORD=123
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_SHOW_SQL=false
+      - SPRING_H2_CONSOLE_ENABLED=false
+
+  backend-h2:
+    image: 'backend:latest'
+    build:
+      context: .
+    ports:
+      - '8080:8080'
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_DATASOURCE_URL=jdbc:h2:mem:webchat
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=sa
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.h2.Driver
+      - SPRING_JPA_SHOW_SQL=false
+      - SPRING_H2_CONSOLE_ENABLED=true
+
+  dbp:
+    image: 'postgres:13.1-alpine'
+    environment:
+      - POSTGRES_USER=theuser
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=docker_dbp_1
+    ports:
+      - '5438:5432'
